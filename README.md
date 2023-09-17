@@ -8,10 +8,16 @@ To install dependencies:
 bun install
 ```
 
-To run:
+Dev mode:
 
 ```bash
-bun run index.ts
+bun index.ts --dev
+```
+
+Build:
+
+```bash
+bun index.ts --build
 ```
 
 MIT
