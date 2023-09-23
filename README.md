@@ -2,22 +2,16 @@
 
 A static site generator running on Bun
 
-To install dependencies:
-
-```bash
-bun install
 ```
-
-Dev mode:
-
-```bash
-bun index.ts --dev
-```
-
-Build:
-
-```bash
-bun index.ts --build
+falcon/
+├── packages/
+│   ├── create-falcon-app/
+│   │   ├── README.md 
+│   │
+│   ├── falcon/
+│   │   ├── README.md
+│
+└── README.md
 ```
 
 MIT

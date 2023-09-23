@@ -4,15 +4,17 @@ import { createElement } from "react";
 import Watcher from "./watcher";
 
 export default class FaclonDevServer {
-  watcher: Watcher;
+  private _watcher: Watcher;
+  private _dir: string;
 
-  constructor({ watcher }: { watcher: Watcher }) {
-    this.watcher = watcher;
+  constructor({ watcher, dir }: { watcher: Watcher; dir: string }) {
+    this._watcher = watcher;
+    this._dir = dir;
   }
 
-  async start(dir: string) {
+  async start() {
     try {
-      this.watcher.start();
+      this._watcher.start();
 
       const componentFiles = await getFiles(`/pages/`);
 
@@ -27,6 +29,8 @@ export default class FaclonDevServer {
       routes.forEach((route) => {
         console.log(`- /${route.toLowerCase()}`);
       });
+
+      const dir = this._dir;
 
       Bun.serve({
         async fetch(req) {

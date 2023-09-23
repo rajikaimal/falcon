@@ -3,7 +3,13 @@ import { createElement } from "react";
 import { getFiles, makeDir, removeDir, writeStaticFile } from "./utils/fs";
 
 export default class StaticBuilder {
-  async build(currentDir: string) {
+  private _dir: string;
+
+  constructor({ dir }: { dir: string }) {
+    this._dir = dir;
+  }
+
+  async build() {
     const defaultOutputDir = `${import.meta.dir}/build/`;
 
     const componentFiles = await getFiles("./pages");
@@ -12,7 +18,7 @@ export default class StaticBuilder {
     makeDir(defaultOutputDir);
 
     componentFiles?.forEach(async (filePath) => {
-      const component = await import(`${currentDir}/${filePath}`);
+      const component = await import(`${this._dir}/${filePath}`);
 
       const currentComponent = createElement(component.default);
       const html = renderToStaticMarkup(currentComponent);
