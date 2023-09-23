@@ -2,14 +2,25 @@ import { renderToReadableStream } from "react-dom/server";
 import { getFiles } from "./utils/fs";
 import { createElement } from "react";
 import Watcher from "./watcher";
+import Loader from "./loader";
 
-export default class FaclonDevServer {
+export default class FalconDevServer {
   private _watcher: Watcher;
   private _dir: string;
+  private _loader: Loader;
 
-  constructor({ watcher, dir }: { watcher: Watcher; dir: string }) {
+  constructor({
+    watcher,
+    dir,
+    loader,
+  }: {
+    watcher: Watcher;
+    dir: string;
+    loader: Loader;
+  }) {
     this._watcher = watcher;
     this._dir = dir;
+    this._loader = loader;
   }
 
   async start() {
@@ -31,6 +42,7 @@ export default class FaclonDevServer {
       });
 
       const dir = this._dir;
+      const loader = this._loader;
 
       Bun.serve({
         async fetch(req) {
@@ -39,7 +51,17 @@ export default class FaclonDevServer {
           if (routes.find((route) => url.pathname === `/${route}`)) {
             const component = await import(`${dir}/pages${url.pathname}`);
 
-            const currentComponent = createElement(component.default);
+            let loaderData = undefined;
+
+            const loaderFn = component.loader;
+            if (loaderFn) {
+              loaderData = await loader.evalLoader(loaderFn);
+            }
+
+            const currentComponent = createElement(
+              component.default,
+              loaderData
+            );
             const stream = await renderToReadableStream(currentComponent);
 
             return new Response(stream, {
