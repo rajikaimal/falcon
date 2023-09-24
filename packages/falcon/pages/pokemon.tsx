@@ -6,5 +6,5 @@ export const loader = async () => {
 };
 
 export default function Pokemon(props) {
-  return <div>Pokemons page {props}</div>;
+  return <div>Pokemons page</div>;
 }

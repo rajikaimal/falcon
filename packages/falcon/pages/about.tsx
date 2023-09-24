@@ -6,12 +6,7 @@ export const loader = (): Props => {
   const data = {
     phone: 81234567,
   };
-  //
-  // const response = await fetch(`https://pokeapi.co/api/v2/pokemon/`);
-  // const json = await response.json();
-  // const results = json.results;
-  // console.log(results);
-  //
+
   return data;
 };
 

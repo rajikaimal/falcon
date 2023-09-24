@@ -1,4 +1,4 @@
-import { readdir, writeFile } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { rmdirSync, mkdirSync } from "node:fs";
 
@@ -14,6 +14,16 @@ export async function getFiles(directoryPath: string): Promise<string[]> {
   } catch (err) {
     console.error(err);
     return [] as string[];
+  }
+}
+
+export async function getFile(filePath: string): Promise<string> {
+  try {
+    const buffer = await readFile(filePath);
+    return buffer.toString();
+  } catch (err) {
+    console.error(err);
+    return Promise.reject(err);
   }
 }
 

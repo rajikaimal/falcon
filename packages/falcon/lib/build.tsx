@@ -1,6 +1,12 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import { getFiles, makeDir, removeDir, writeStaticFile } from "./utils/fs";
+import {
+  getFiles,
+  makeDir,
+  removeDir,
+  writeStaticFile,
+  getFile,
+} from "./utils/fs";
 import Loader from "./loader";
 
 export default class StaticBuilder {
@@ -20,7 +26,22 @@ export default class StaticBuilder {
     makeDir(defaultOutputDir);
 
     componentFiles?.forEach(async (filePath) => {
-      const isTsx = filePath.includes("tsx");
+      const isTsx = filePath.includes(".tsx");
+      const isCss = filePath.includes(".css");
+
+      if (isCss) return;
+
+      const tsxFile = filePath.split("/");
+      const tsxFileName = tsxFile[tsxFile.length - 1].split(".")[0];
+      const hasStyleSheet = componentFiles
+        .filter((file) => file.includes(".css"))
+        .find((file) => {
+          const filePathArr = file.split("/");
+          const fileNameArr = filePathArr[filePathArr.length - 1].split(".");
+          const cssFileName = fileNameArr[0];
+
+          if (cssFileName === tsxFileName) return true;
+        });
 
       if (isTsx) {
         const component = await import(`${filePath}`);
@@ -34,12 +55,19 @@ export default class StaticBuilder {
         const currentComponent = createElement(component.default, loaderData);
         const body = renderToStaticMarkup(currentComponent);
         const fileName = filePath.split("pages/")[1].split(".tsx")[0];
-        // const hasStyleSheet = this.hasStyleSheet(filePath);
+
+        let inlineCss;
+        if (hasStyleSheet) {
+          inlineCss = await getFile(hasStyleSheet);
+        }
 
         const html = `
 <html>
-  <header>
-  </header>
+  <head>
+    <style>
+      ${inlineCss}
+    </style>
+  </head>
   <body>
     ${body}
   </body>
