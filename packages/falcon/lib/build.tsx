@@ -64,9 +64,7 @@ export default class StaticBuilder {
         const html = `
 <html>
   <head>
-    <style>
-      ${inlineCss}
-    </style>
+    ${inlineCss ? `<style>${inlineCss}</style>` : ""}
   </head>
   <body>
     ${body}
