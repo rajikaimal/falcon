@@ -64,7 +64,7 @@ export default class FalconDevServer {
             }
 
             const currentComponent = createElement(component.default, {
-              ...loaderData,
+              data: loaderData.data,
               styles: {
                 ...component.styles,
               },

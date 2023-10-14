@@ -1,5 +1,7 @@
 interface Props {
-  phone: number;
+  data: {
+    phone: number;
+  };
   styles: any;
 }
 
@@ -8,7 +10,7 @@ export const loader = (): Omit<Props, "styles"> => {
     phone: 81234567,
   };
 
-  return data;
+  return { data };
 };
 
 export const styles = {
@@ -18,6 +20,7 @@ export const styles = {
   },
 };
 
-export default function About({ phone, styles }: Props) {
+export default function About({ data, styles }: Props) {
+  const { phone } = data;
   return <div style={styles.text}>Phone number: {phone}</div>;
 }
