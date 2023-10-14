@@ -3,7 +3,7 @@ interface Props {
   styles: any;
 }
 
-export const loader = (): Partial<Props> => {
+export const loader = (): Omit<Props, "styles"> => {
   const data = {
     phone: 81234567,
   };
