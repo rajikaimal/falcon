@@ -1,6 +1,7 @@
 import StaticBuilder from "./lib/build";
 import FalconDevServer from "./lib/falconDevServer";
 import Loader from "./lib/loader";
+import { FalconRouter } from "./lib/router";
 import Watcher from "./lib/watcher";
 
 const argv = Bun.argv.slice(2);
@@ -13,8 +14,9 @@ const loader = new Loader();
 
 if (devMode) {
   const watcher = new Watcher();
+  const router = new FalconRouter({ dir });
 
-  const devServer = new FalconDevServer({ watcher, dir, loader });
+  const devServer = new FalconDevServer({ watcher, dir, loader, router });
   devServer.start();
 }
 

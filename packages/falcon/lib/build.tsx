@@ -8,24 +8,35 @@ import {
   getFile,
 } from "./utils/fs";
 import Loader from "./loader";
+import { FalconRouter } from "./router";
 
 export default class StaticBuilder {
   private _dir: string;
   private _loader: Loader;
+  private _router: FalconRouter;
 
-  constructor({ dir, loader }: { dir: string; loader: Loader }) {
+  constructor({
+    dir,
+    loader,
+    router,
+  }: {
+    dir: string;
+    loader: Loader;
+    router: FalconRouter;
+  }) {
     this._dir = dir;
     this._loader = loader;
+    this._router = router;
   }
 
   async build() {
     const defaultOutputDir = `${this._dir}/build/`;
-    const componentFiles = await getFiles("/pages");
+    const routes = await this._router.getAllFiles();
 
     removeDir(defaultOutputDir);
     makeDir(defaultOutputDir);
 
-    componentFiles?.forEach(async (filePath) => {
+    routes?.forEach(async (filePath) => {
       const isTsx = filePath.includes(".tsx");
       const isCss = filePath.includes(".css");
 
@@ -33,7 +44,7 @@ export default class StaticBuilder {
 
       const tsxFile = filePath.split("/");
       const tsxFileName = tsxFile[tsxFile.length - 1].split(".")[0];
-      const hasStyleSheet = componentFiles
+      const hasStyleSheet = routes
         .filter((file) => file.includes(".css"))
         .find((file) => {
           const filePathArr = file.split("/");
