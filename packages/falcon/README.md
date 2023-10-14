@@ -30,4 +30,46 @@ bun index.ts --build
 - CSS modules - ⏳
 - Layouts - ⏳
 
+## Inline styling
+
+```tsx
+interface Props {
+  styles: any;
+}
+
+export const styles = {
+  text: {
+    backgroundColor: "red",
+    fontSize: "20px",
+  },
+};
+
+export default function Page({ styles }: Props) {
+  return <div style={styles.text}>Page</div>;
+}
+```
+
+## Data loading
+
+```tsx
+interface Props {
+  data: {
+    phone: number;
+  };
+}
+
+export const loader = (): Omit<Props, "styles"> => {
+  const data = {
+    phone: 81234567,
+  };
+
+  return { data };
+};
+
+export default function About({ data, styles }: Props) {
+  const { phone } = data;
+  return <div>Phone number: {phone}</div>;
+}
+```
+
 MIT
