@@ -15,5 +15,8 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "lightningcss": "^1.22.0"
   }
 }

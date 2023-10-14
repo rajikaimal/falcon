@@ -11,16 +11,21 @@ const buildMode = !!argv.find((arg) => arg === "--build");
 
 const dir = import.meta.dir;
 const loader = new Loader();
+const router = new FalconRouter({ dir });
 
 if (devMode) {
   const watcher = new Watcher();
-  const router = new FalconRouter({ dir });
 
-  const devServer = new FalconDevServer({ watcher, dir, loader, router });
+  const devServer = new FalconDevServer({
+    watcher,
+    dir,
+    loader,
+    router,
+  });
   devServer.start();
 }
 
 if (!devMode && buildMode) {
-  const builder = new StaticBuilder({ dir, loader });
+  const builder = new StaticBuilder({ dir, loader, router });
   builder.build();
 }

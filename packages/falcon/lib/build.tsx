@@ -1,12 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import {
-  getFiles,
-  makeDir,
-  removeDir,
-  writeStaticFile,
-  getFile,
-} from "./utils/fs";
+import { makeDir, removeDir, writeStaticFile } from "./utils/fs";
 import Loader from "./loader";
 import { FalconRouter } from "./router";
 
@@ -42,18 +36,6 @@ export default class StaticBuilder {
 
       if (isCss) return;
 
-      const tsxFile = filePath.split("/");
-      const tsxFileName = tsxFile[tsxFile.length - 1].split(".")[0];
-      const hasStyleSheet = routes
-        .filter((file) => file.includes(".css"))
-        .find((file) => {
-          const filePathArr = file.split("/");
-          const fileNameArr = filePathArr[filePathArr.length - 1].split(".");
-          const cssFileName = fileNameArr[0];
-
-          if (cssFileName === tsxFileName) return true;
-        });
-
       if (isTsx) {
         const component = await import(`${filePath}`);
         let loaderData = undefined;
@@ -63,19 +45,17 @@ export default class StaticBuilder {
           loaderData = await this._loader.evalLoader(loader);
         }
 
-        const currentComponent = createElement(component.default, loaderData);
+        const styles = component.styles;
+        const currentComponent = createElement(component.default, {
+          ...loaderData,
+          styles,
+        });
         const body = renderToStaticMarkup(currentComponent);
         const fileName = filePath.split("pages/")[1].split(".tsx")[0];
-
-        let inlineCss;
-        if (hasStyleSheet) {
-          inlineCss = await getFile(hasStyleSheet);
-        }
 
         const html = `
 <html>
   <head>
-    ${inlineCss ? `<style>${inlineCss}</style>` : ""}
   </head>
   <body>
     ${body}

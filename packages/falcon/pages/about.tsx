@@ -1,8 +1,9 @@
 interface Props {
   phone: number;
+  styles: any;
 }
 
-export const loader = (): Props => {
+export const loader = (): Partial<Props> => {
   const data = {
     phone: 81234567,
   };
@@ -10,6 +11,13 @@ export const loader = (): Props => {
   return data;
 };
 
-export default function About({ phone }: Props) {
-  return <div className="text">About page, phone number: {phone}</div>;
+export const styles = {
+  text: {
+    backgroundColor: "red",
+    fontSize: "20px",
+  },
+};
+
+export default function About({ phone, styles }: Props) {
+  return <div style={styles.text}>Phone number: {phone}</div>;
 }
