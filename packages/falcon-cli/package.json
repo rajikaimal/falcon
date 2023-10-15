@@ -1,5 +1,5 @@
 {
-  "name": "create-falcon-app",
+  "name": "falcon-cli",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
