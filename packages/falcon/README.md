@@ -30,6 +30,10 @@ bun index.ts --build
 - CSS modules - ⏳
 - Layouts - ⏳
 
+## Live Reload
+
+https://github.com/rajikaimal/falcon/assets/8940086/a39d4c70-0f23-4b4e-9930-ddb73ef807fc
+
 ## Inline styling
 
 ```tsx
