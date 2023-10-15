@@ -1,9 +1,10 @@
-import { renderToReadableStream } from "react-dom/server";
+import { renderToReadableStream, renderToString } from "react-dom/server";
 import { createElement } from "react";
 import Watcher from "./watcher";
 import Loader from "./loader";
 import { FalconRouter } from "./router";
 import CssParser, { Css } from "./cssParser";
+import { LiveReload } from "./liveReload";
 
 export default class FalconDevServer {
   private _port: number;
@@ -11,6 +12,7 @@ export default class FalconDevServer {
   private _dir: string;
   private _loader: Loader;
   private _router: FalconRouter;
+  private _liveReload: LiveReload;
 
   constructor({
     port,
@@ -32,11 +34,13 @@ export default class FalconDevServer {
     this._dir = dir;
     this._loader = loader;
     this._router = router;
+    this._liveReload = new LiveReload();
   }
 
   async start() {
     try {
-      this._watcher.start();
+      const io = this._liveReload.createServer();
+      this._watcher.start(io);
       const routes = await this._router.getAllRoutes();
 
       console.log("Routes: \n");
@@ -54,6 +58,10 @@ export default class FalconDevServer {
           const url = new URL(req.url);
 
           if (routes.find((route) => url.pathname === `/${route}`)) {
+            delete require.cache[
+              require.resolve(`${dir}/pages${url.pathname}`)
+            ];
+
             const component = await import(`${dir}/pages${url.pathname}`);
 
             let loaderData = undefined;
@@ -63,15 +71,33 @@ export default class FalconDevServer {
               loaderData = await loader.evalLoader(loaderFn);
             }
 
+            const socketIOScript = `
+                <script
+                  src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+                  integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+                  crossorigin="anonymous"
+                ></script>
+                <script>
+                  const socket = io('http://localhost:3001');
+                  socket.on('reload', () => { console.log('reloading'); window.location.reload(true); });
+                </script>
+            `;
+
             const currentComponent = createElement(component.default, {
-              data: loaderData.data,
+              data: loaderData?.data,
               styles: {
                 ...component.styles,
               },
             });
-            const stream = await renderToReadableStream(currentComponent);
+            const body = renderToString(currentComponent);
+            const html = `
+              <body>
+                ${body}
+                ${socketIOScript}
+              </body>
+            `;
 
-            return new Response(stream, {
+            return new Response(html, {
               headers: { "Content-Type": "text/html" },
             });
           }

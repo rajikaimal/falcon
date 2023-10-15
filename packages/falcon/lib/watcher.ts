@@ -1,16 +1,19 @@
 import { FSWatcher, watch } from "fs";
+import { Server } from "socket.io";
 
 export default class Watcher {
   private _dir: string;
   watcher: FSWatcher;
 
   constructor({ dir }: { dir: string }) {
+    console.log("DIR", dir);
     this._dir = dir;
   }
 
-  start() {
+  start(io: Server) {
     this.watcher = watch(this._dir, { recursive: true }, (event, filename) => {
-      console.log(`Detected ${event} in ${filename}`);
+      console.log(`Detected ${event}`);
+      io.emit("reload", { reload: true });
     });
 
     process.on("SIGINT", () => {

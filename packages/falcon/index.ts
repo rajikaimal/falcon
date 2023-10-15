@@ -14,7 +14,7 @@ const loader = new Loader();
 const router = new FalconRouter({ dir });
 
 if (devMode) {
-  const watcher = new Watcher();
+  const watcher = new Watcher({ dir: `${dir}/pages` });
 
   const devServer = new FalconDevServer({
     watcher,
