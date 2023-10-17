@@ -1,5 +1,5 @@
 import StaticBuilder from "./lib/build";
-import FalconDevServer from "./lib/falconDevServer";
+import Dev from "./lib/dev";
 import Loader from "./lib/loader";
 import { FalconRouter } from "./lib/router";
 import Watcher from "./lib/watcher";
@@ -16,7 +16,7 @@ const router = new FalconRouter({ dir });
 if (devMode) {
   const watcher = new Watcher({ dir: `${dir}/pages` });
 
-  const devServer = new FalconDevServer({
+  const devServer = new Dev({
     watcher,
     dir,
     loader,

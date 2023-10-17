@@ -6,7 +6,7 @@ import { FalconRouter } from "./router";
 import CssParser, { Css } from "./cssParser";
 import { LiveReload } from "./liveReload";
 
-export default class FalconDevServer {
+export default class Dev {
   private _port: number;
   private _watcher: Watcher;
   private _dir: string;
@@ -79,7 +79,7 @@ export default class FalconDevServer {
                 ></script>
                 <script>
                   const socket = io('http://localhost:3001');
-                  socket.on('reload', () => { console.log('reloading'); window.location.reload(true); });
+                  socket.on('reload', (res) => { if(res.route === window.location.pathname) { console.log('reloading'); window.location.reload(true); } });
                 </script>
             `;
 
@@ -91,7 +91,7 @@ export default class FalconDevServer {
             });
             const body = renderToString(currentComponent);
             const html = `
-              <body>
+              <body style="margin: 0">
                 ${body}
                 ${socketIOScript}
               </body>

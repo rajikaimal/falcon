@@ -12,13 +12,27 @@ export const loader = async () => {
   return { data: results };
 };
 
-export default function Pokemon({ data }: Props) {
+export const styles = {
+  wrapper: {
+    backgroundColor: "#000000",
+    padding: 20,
+  },
+  text: {
+    color: "#fff",
+    fontFamily: "Helvetica",
+    paddingBottom: 15,
+  },
+};
+
+export default function Pokemon({ data, styles }: Props) {
   return (
-    <div>
-      Pokemons
+    <div style={styles.wrapper}>
+      <div style={styles.text}> Pokemons list</div>
       <ul>
         {data.map((pokemon: any) => (
-          <li key={pokemon.name}> {pokemon.name} </li>
+          <li key={pokemon.name} style={styles.text}>
+            {pokemon.name}
+          </li>
         ))}
       </ul>
     </div>

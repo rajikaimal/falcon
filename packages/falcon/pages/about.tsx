@@ -20,7 +20,7 @@ export const styles = {
   },
 };
 
-export default function About({ data, styles }: Props) {
+export default function AboutPage({ data, styles }: Props) {
   const { phone } = data;
-  return <div style={styles.text}>Phone number: {phone}</div>;
+  return <div style={styles.text}>Phone number: {phone} ab</div>;
 }

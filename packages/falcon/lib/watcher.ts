@@ -12,8 +12,11 @@ export default class Watcher {
 
   start(io: Server) {
     this.watcher = watch(this._dir, { recursive: true }, (event, filename) => {
-      console.log(`Detected ${event}`);
-      io.emit("reload", { reload: true });
+      console.log(`Detected ${event} ${filename}`);
+
+      if (filename) {
+        io.emit("reload", { route: `/${filename.split(".")[0]}` });
+      }
     });
 
     process.on("SIGINT", () => {
